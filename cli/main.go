@@ -10,7 +10,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/merjildo/bestRoute/search"
+	"github.com/merjildo/shortestRoute/search"
 )
 
 type Consult struct {

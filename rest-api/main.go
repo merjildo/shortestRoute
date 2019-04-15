@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/merjildo/bestRoute/load"
-	"github.com/merjildo/bestRoute/search"
+	"github.com/merjildo/shortestRoute/load"
+	"github.com/merjildo/shortestRoute/search"
 )
 
 type routeStruct struct {

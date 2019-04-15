@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/merjildo/bestRoute/search"
+	"github.com/merjildo/shortestRoute/search"
 )
 
 func LoadRoutes(filename string) []search.Route {
