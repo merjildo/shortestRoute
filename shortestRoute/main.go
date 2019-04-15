@@ -1,3 +1,4 @@
+// Rest Server used to find the shortest route
 package main
 
 import (
@@ -20,15 +21,20 @@ type routeStruct struct {
 	Weight int
 }
 
-type ApiGraph struct {
+// APIGraph synthesizes the graph
+//used to model the search problem
+type APIGraph struct {
 	graph *search.Graph
 }
 
-type ApiData struct {
+// APIData synthesizes the info
+// used to load the graphs
+type APIData struct {
 	data           []search.Route
 	fileNameRoutes string
 }
 
+// ShortestPathResponse is the desired response.
 type ShortestPathResponse struct {
 	ShortestPath string
 	Distance     int
@@ -36,7 +42,7 @@ type ShortestPathResponse struct {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage : " + os.Args[0] + " filename")
+		fmt.Println("Usage : " + os.Args[0] + "  CSV filename (routes.csv)")
 		os.Exit(1)
 	}
 
@@ -44,8 +50,8 @@ func main() {
 	data := load.LoadRoutes(filename)
 	graph := search.LoadGraph(data)
 
-	apiGraph := &ApiGraph{graph: graph}
-	apiRoute := &ApiData{data: data, fileNameRoutes: filename}
+	apiGraph := &APIGraph{graph: graph}
+	apiRoute := &APIData{data: data, fileNameRoutes: filename}
 
 	http.HandleFunc("/register", apiRoute.RegisterRoute)
 	http.HandleFunc("/consult", apiGraph.ConsultShortestPath)
@@ -54,7 +60,9 @@ func main() {
 
 }
 
-func (apiData *ApiData) RegisterRoute(w http.ResponseWriter, r *http.Request) {
+// RegisterRoute synthesizes an end point
+// used to register a new route and save into csv file
+func (apiData *APIData) RegisterRoute(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var route routeStruct
 	err := decoder.Decode(&route)
@@ -87,7 +95,9 @@ func (apiData *ApiData) RegisterRoute(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (apiGraph *ApiGraph) ConsultShortestPath(w http.ResponseWriter, r *http.Request) {
+// ConsultShortestPath synthesizes an end point
+// used to consult the shortest path
+func (apiGraph *APIGraph) ConsultShortestPath(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var route routeStruct
 	err := decoder.Decode(&route)
