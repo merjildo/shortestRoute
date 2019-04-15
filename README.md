@@ -4,7 +4,7 @@ Personal project
 # Install
 #---------
 #This project includes two executables: shortestRoute and cli.
-#Those file should be created using the following commands:
+#Those files should be created using the following commands:
  
 > go install github.com/merjildo/shortestRoute/cli
 
@@ -20,9 +20,12 @@ Personal project
 # Test Interfaces
 # ---------------
 # - Using Command line (cli):
-# in a differente console run the following:
+# in a different console run the following:
 > cd $GOPATH/bin
 > ./cli
+
+# then you will face the prompt:
+# please enter the route:
 
 # - Using Rest Interfaces
 # Use Postman, SoapUi or whatever tool you prefer:
