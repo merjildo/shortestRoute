@@ -2,8 +2,56 @@
 Personal project
 
 # Install
-go install github.com/merjildo/shortestRoute/cli
-go install github.com/merjildo/shortestRoute/shortestRoute
+#---------
+#This project includes two executables: shortestRoute and cli.
+#Those file should be created using the following commands:
+ 
+> go install github.com/merjildo/shortestRoute/cli
 
-# Run
+> go install github.com/merjildo/shortestRoute/shortestRoute
+
+# Run server
+#-------
+# You shoud run shortestRoute application in order to enable endpoints
+
+> cd $GOPATH/bin
+>./shortestRoute
+
+# Test Interfaces
+# ---------------
+# - Using Command line (cli):
+# in a differente console run the following:
+> cd $GOPATH/bin
+> ./cli
+
+# - Using Rest Interfaces
+# Use Postman, SoapUi or whatever tool you prefer:
+
+# Register a new route
+#---------------------
+# please use:
+
+POST: http://localhost:8080/register 
+
+# use the following body:
+
+{
+	"From":"BRC",
+	"To":"NYC",
+	"Weight": 100
+}
+
+# Consult the shortest route
+#---------------------------
+# use:
+GET: http://localhost:8080/consult
+
+# use the following body:
+
+{	
+	"From":"GRU",
+	"To":"CDG"
+}
+
+
 
