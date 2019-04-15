@@ -10,26 +10,29 @@ Those files should be created using the following commands:
 
 > go install github.com/merjildo/shortestRoute/shortestRoute
 
-### Run server
+### 1. Run server
 You shoud run shortestRoute application in order to enable endpoints
 
 > cd $GOPATH/bin
+
 >./shortestRoute
 
-### Test Interfaces
+### 2. Interface Testing
 
-####  Using Command line (cli):
+#### A. Using Command line (cli):
 in a different console run the following:
+
 > cd $GOPATH/bin
+
 > ./cli
 
 then you will face the prompt:
 "please enter the route:"
 
-#### Using Rest Interfaces
+#### B. Using Rest Interfaces
 Use Postman, SoapUi or whatever tool you prefer:
 
-#### Register a new route
+##### B.1 Register a new route
 please use:
 
 POST: http://localhost:8080/register 
@@ -37,12 +40,16 @@ POST: http://localhost:8080/register
 with the following body:
 
 {
+
 	"From":"BRC",
+
 	"To":"NYC",
+
 	"Weight": 100
+
 }
 
-#### Consult the shortest route
+##### B.2 Consult the shortest route
 use:
 
 GET: http://localhost:8080/consult
@@ -50,6 +57,9 @@ GET: http://localhost:8080/consult
 with the following body:
 
 {	
+
 	"From":"GRU",
+
 	"To":"CDG"
+
 }
