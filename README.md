@@ -17,9 +17,9 @@ You shoud run shortestRoute application in order to enable endpoints
 
 >./shortestRoute path_to_CSV_file.csv
 
-### 2. Interface Testing
+### 2. Query Interfaces
 
-#### A. Using Command line (cli):
+#### A. Console Interface (Command line - cli):
 Open a new console and run the following:
 
 > cd $GOPATH/bin
@@ -29,7 +29,7 @@ Open a new console and run the following:
 then you will face the prompt:
 "please enter the route:"
 
-#### B. Using Rest Interfaces
+#### B. Rest Interfaces
 Use Postman, SoapUI or whatever tool you prefer:
 
 ##### B.1 Register a new route
@@ -40,6 +40,7 @@ POST: http://localhost:8080/register
 with the following body:
 
 {
+
 	"From":"BRC",
 
 	"To":"NYC",
@@ -48,14 +49,15 @@ with the following body:
 }
 
 ##### B.2 Consult the shortest route
-In the case you want to consult the shortes route, 
-please use:
+In the case you want to consult the shortes route
+between two pooints, please use:
 
 GET: http://localhost:8080/consult
 
 In the body you have to  set initial and end route:
 
 {	
+
 	"From":"GRU",
 
 	"To":"CDG"

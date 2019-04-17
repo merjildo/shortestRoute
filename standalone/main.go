@@ -16,7 +16,7 @@ func main() {
 		os.Exit(1)
 	}
 	filename := os.Args[1]
-	data := load.LoadRoutes(filename)
+	data, _ := load.Routes(filename)
 	graph := search.LoadGraph(data)
 	reader := bufio.NewReader(os.Stdin)
 	for {
@@ -24,7 +24,6 @@ func main() {
 		shortestPath, shortestDistance := search.Search(graph, routeToFind.Start, routeToFind.End)
 		fmt.Println("best route:", strings.Join(shortestPath[:], " - "), " > $", shortestDistance)
 	}
-
 }
 
 func request(reader *bufio.Reader) *search.Route {

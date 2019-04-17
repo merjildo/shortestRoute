@@ -42,6 +42,9 @@ func main() {
 	for {
 		fmt.Print("please enter the route: ")
 		routeToFind := processRequest(reader)
+		if routeToFind.Start == "" || routeToFind.End == "" {
+			continue
+		}
 		consult := Consult{
 			From: routeToFind.Start,
 			To:   routeToFind.End,
@@ -84,11 +87,15 @@ func processRequest(reader *bufio.Reader) *search.Route {
 	routeString = strings.TrimSuffix(routeString, "\n")
 	// TODO: return if empty option (enter)
 	routeStr := strings.Split(routeString, "-")
-	//TODO: check if node exists
-	route := search.Route{
-		Start:  routeStr[0],
-		End:    routeStr[1],
-		Weight: 0,
+
+	var route search.Route
+	if len(routeStr) > 1 {
+		//TODO: check if node exists
+		route = search.Route{
+			Start:  routeStr[0],
+			End:    routeStr[1],
+			Weight: 0,
+		}
 	}
 	return &route
 }
