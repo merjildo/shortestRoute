@@ -2,28 +2,34 @@ package load
 
 import (
 	"encoding/csv"
+	"fmt"
+	"io"
 	"os"
 	"strconv"
 
 	"github.com/merjildo/shortestRoute/search"
 )
 
-func LoadRoutes(filename string) []search.Route {
+// Routes  return routes loaded from filename CSV file
+func Routes(filename string) ([]*search.Route, error) {
 	// Open CSV file
-	f, err := os.Open(filename)
+	handle, err := os.Open(filename)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("%s file name not found", filename)
 	}
-	defer f.Close()
+	defer handle.Close()
 
+	return readData(handle)
+}
+
+func readData(handle io.Reader) ([]*search.Route, error) {
 	// Read File into a Variable
-	lines, err := csv.NewReader(f).ReadAll()
+	lines, err := csv.NewReader(handle).ReadAll()
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("Can not read lines from file")
 	}
 
-	var data []search.Route
-
+	var data []*search.Route
 	for _, line := range lines {
 		w, _ := strconv.Atoi(line[2])
 		route := search.Route{
@@ -31,7 +37,7 @@ func LoadRoutes(filename string) []search.Route {
 			End:    line[1],
 			Weight: w,
 		}
-		data = append(data, route)
+		data = append(data, &route)
 	}
-	return data
+	return data, nil
 }

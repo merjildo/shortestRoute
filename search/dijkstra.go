@@ -5,11 +5,14 @@ import (
 	"sort"
 )
 
+// Path is the struct used to abtract a vertex
 type Path struct {
 	distance int
 	nodeID   string
 }
 
+// Dijkstra is the proper function used to
+// search shortest path based on graphs
 func Dijkstra(graph *Graph, start *Vertex) {
 	start.setDistance(0)
 	unvisitedQueue := []Path{}
@@ -60,6 +63,8 @@ func Dijkstra(graph *Graph, start *Vertex) {
 	}
 }
 
+// Shortest is the function used to determine the distance
+// between two specific points
 func Shortest(v *Vertex, shortestPath *[]string) {
 	if v.previous != nil {
 		*shortestPath = append(*shortestPath, v.previous.GetID())

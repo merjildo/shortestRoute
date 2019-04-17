@@ -13,11 +13,13 @@ import (
 	"github.com/merjildo/shortestRoute/search"
 )
 
+// Consult is the struct used for consults
 type Consult struct {
 	From string
 	To   string
 }
 
+// Response is the struct used to send rest responses
 type Response struct {
 	ShortestPath string
 	Distance     int
@@ -49,9 +51,11 @@ func main() {
 	}
 }
 
-func sendRequest(consult Consult, apiUrl string) *Response {
+func sendRequest(consult Consult, apiURL string) *Response {
 	codedConsult, _ := json.Marshal(consult)
-	req, err := http.NewRequest(http.MethodGet, apiUrl, bytes.NewBuffer(codedConsult))
+	req, err := http.NewRequest(http.MethodGet,
+		apiURL,
+		bytes.NewBuffer(codedConsult))
 	if err != nil {
 		panic(err)
 	}

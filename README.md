@@ -15,12 +15,12 @@ You shoud run shortestRoute application in order to enable endpoints
 
 > cd $GOPATH/bin
 
->./shortestRoute
+>./shortestRoute path_to_CSV_file.csv
 
 ### 2. Interface Testing
 
 #### A. Using Command line (cli):
-in a different console run the following:
+Open a new console and run the following:
 
 > cd $GOPATH/bin
 
@@ -30,36 +30,50 @@ then you will face the prompt:
 "please enter the route:"
 
 #### B. Using Rest Interfaces
-Use Postman, SoapUi or whatever tool you prefer:
+Use Postman, SoapUI or whatever tool you prefer:
 
 ##### B.1 Register a new route
-please use:
+In order to reguster a new path, please use:
 
 POST: http://localhost:8080/register 
 
 with the following body:
 
 {
-
 	"From":"BRC",
 
 	"To":"NYC",
 
 	"Weight": 100
-
 }
 
 ##### B.2 Consult the shortest route
-use:
+In the case you want to consult the shortes route, 
+please use:
 
 GET: http://localhost:8080/consult
 
-with the following body:
+In the body you have to  set initial and end route:
 
 {	
-
 	"From":"GRU",
 
 	"To":"CDG"
-
 }
+
+### 3. Standalone version
+
+Additionally, this project includes a standalone version. 
+This file should be created using the following command:
+
+> go install github.com/merjildo/shortestRoute/standalone
+
+#### 3.1 Run standalone versio
+
+> cd $GOPATH/bin
+
+>./standalone path_to_CSV_file.csv
+
+then you will face the prompt:
+
+> please enter the route:

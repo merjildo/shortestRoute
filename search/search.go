@@ -1,11 +1,13 @@
 package search
 
+// Route is the struct used to set the routes info
 type Route struct {
 	Start  string
 	End    string
 	Weight int
 }
 
+// Search is the function used to search the shortest route
 func Search(g *Graph, start string, end string) ([]string, int) {
 	g = resetDistances(g)
 	Dijkstra(g, g.GetVertex(start))
@@ -16,7 +18,8 @@ func Search(g *Graph, start string, end string) ([]string, int) {
 	return reverseSlice(shortestPath), target.GetDistance()
 }
 
-func LoadGraph(data []Route) *Graph {
+// LoadGraph is the function used to set routes info.
+func LoadGraph(data []*Route) *Graph {
 	g := NewGraph()
 
 	nodes := make(map[string]string)

@@ -21,17 +21,12 @@ type routeStruct struct {
 	Weight int
 }
 
-// APIGraph synthesizes the graph
-//used to model the search problem
-type APIGraph struct {
-	graph *search.Graph
-}
-
 // APIData synthesizes the info
 // used to load the graphs
 type APIData struct {
-	data           []search.Route
+	data           []*search.Route
 	fileNameRoutes string
+	graph          *search.Graph
 }
 
 // ShortestPathResponse is the desired response.
@@ -42,19 +37,23 @@ type ShortestPathResponse struct {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage : " + os.Args[0] + "  CSV filename (routes.csv)")
+		fmt.Println("Usage : " + os.Args[0] + " filename.csv")
 		os.Exit(1)
 	}
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 
 	filename := os.Args[1]
-	data := load.LoadRoutes(filename)
+	data, _ := load.Routes(filename)
 	graph := search.LoadGraph(data)
 
-	apiGraph := &APIGraph{graph: graph}
-	apiRoute := &APIData{data: data, fileNameRoutes: filename}
+	apiRoute := &APIData{
+		data:           data,
+		fileNameRoutes: filename,
+		graph:          graph,
+	}
 
 	http.HandleFunc("/register", apiRoute.RegisterRoute)
-	http.HandleFunc("/consult", apiGraph.ConsultShortestPath)
+	http.HandleFunc("/consult", apiRoute.ConsultShortestPath)
 	// TODO: externalize port
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
@@ -70,49 +69,99 @@ func (apiData *APIData) RegisterRoute(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	newRoute := search.Route{
-		Start:  route.From,
-		End:    route.To,
-		Weight: route.Weight}
-
-	apiData.data = append(apiData.data, newRoute)
-
 	f, err := os.OpenFile(apiData.fileNameRoutes, os.O_WRONLY, 0600)
 	if err != nil {
 		panic(err)
 	}
-
 	defer f.Close()
 	writer := csv.NewWriter(f)
 	defer writer.Flush()
 
-	// TODO: Verify if the route already exists
+	newRoute := &search.Route{
+		Start:  route.From,
+		End:    route.To,
+		Weight: route.Weight,
+	}
+
+	checkDuplicate := false
+	for _, node := range apiData.data {
+		if node.Start == route.From && node.End == route.To {
+			log.Println(node.Start + "->" +
+				node.End +
+				" will be updated to " + strconv.Itoa(route.Weight))
+			node.Weight = route.Weight
+			checkDuplicate = true
+		}
+	}
+	if !checkDuplicate {
+		log.Println(newRoute.Start + "->" + newRoute.End + " will be added.")
+		apiData.data = append(apiData.data, newRoute)
+	}
 
 	for _, line := range apiData.data {
 		strSlice := []string{line.Start, line.End, strconv.Itoa(line.Weight)}
 		err = writer.Write(strSlice)
-
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(apiData.data)
 }
 
 // ConsultShortestPath synthesizes an end point
 // used to consult the shortest path
-func (apiGraph *APIGraph) ConsultShortestPath(w http.ResponseWriter, r *http.Request) {
+func (apiData *APIData) ConsultShortestPath(w http.ResponseWriter, r *http.Request) {
+	log.Println("Connected from ", r.Host)
 	decoder := json.NewDecoder(r.Body)
 	var route routeStruct
 	err := decoder.Decode(&route)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Requested:", route)
+	log.Println("Payload ", route)
 
-	shortestPath, shortestDistance := search.Search(apiGraph.graph, route.From, route.To)
-	response := ShortestPathResponse{
-		ShortestPath: strings.Join(shortestPath[:], " - "),
-		Distance:     shortestDistance}
+	var response ShortestPathResponse
+
+	if val, msg := checkValues(*apiData, &route); val == true {
+		shortestPath, shortestDistance := search.Search(
+			apiData.graph,
+			strings.ToUpper(route.From),
+			strings.ToUpper(route.To))
+		response = ShortestPathResponse{
+			ShortestPath: strings.Join(shortestPath[:], " - "),
+			Distance:     shortestDistance}
+	} else {
+		response.ShortestPath = msg
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(response)
+}
 
+func checkValues(apiData APIData, route *routeStruct) (bool, string) {
+	route.From = strings.Trim(route.From, " ")
+	route.To = strings.Trim(route.To, " ")
+	route.From = strings.ToUpper(route.From)
+	route.To = strings.ToUpper(route.To)
+
+	graph := apiData.graph
+	var fromOk = false
+	var toOk = false
+	var msg string
+	for _, node := range graph.GetVertices() {
+		if route.From == node {
+			fromOk = true
+		}
+		if route.To == node {
+			toOk = true
+		}
+	}
+
+	if !fromOk || !toOk {
+		msg = "Error: " + route.To + " or " + route.From + " is wrong"
+		log.Println(msg)
+	}
+
+	return (fromOk && toOk), msg
 }
